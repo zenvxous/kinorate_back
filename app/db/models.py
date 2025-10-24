@@ -1,18 +1,19 @@
 from uuid import UUID as uuid_default
+
 from sqlalchemy import (
-    UUID,
-    String,
-    Integer,
-    Text,
     ARRAY,
-)
-from sqlalchemy import (
+    UUID,
     Column,
     DateTime,
+    ForeignKey,
+    Integer,
+    String,
+    Text,
     func,
 )
 from sqlalchemy.orm import DeclarativeBase, relationship
 from uuid_utils import uuid7
+
 
 def generate_uuid():
     return uuid_default(str(uuid7()))
@@ -34,7 +35,7 @@ class Movie(Base):
     __tablename__ = "movies"
 
     id = Column(UUID, primary_key=True, default=generate_uuid)
-    tmdb_id = Column(Integer, nullable=False)   
+    tmdb_id = Column(Integer, nullable=False)
     genres = Column(ARRAY(String(25)), nullable=False)
 
     recention = relationship("Recention", back_populates="movie")
@@ -46,7 +47,9 @@ class Recention(Base):
     rate = Column(Integer, nullable=False, default=0)
     comment = Column(Text, nullable=True)
     movie_status = Column(String(10), nullable=False)
-    
-    
+
+    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
+    movie_id = Column(UUID, ForeignKey("movies.id"), nullable=False)
+
     user = relationship("User", back_populates="recention")
     movie = relationship("Movie", back_populates="recention")
