@@ -1,3 +1,5 @@
+from uuid import UUID
+
 from pydantic import BaseModel
 
 from app.utils.as_form import as_form
@@ -13,3 +15,8 @@ class CreateUsersSchema(BaseModel):
 class LoginUsersSchema(BaseModel):
     email: str
     password: str
+
+class UserResponse(BaseModel):
+    id: UUID
+    email: str
+    nickname: str

@@ -11,7 +11,11 @@ from app.exceptions.api import (
     InvalidEmail,
     UserAlreadyExists,
 )
-from app.schemas.users import CreateUsersSchema, LoginUsersSchema
+from app.schemas.users import (
+    CreateUsersSchema,
+    LoginUsersSchema,
+    UserResponse,
+)
 from app.settings import settings
 from app.utils.common import is_valid_email
 from app.utils.session import (
@@ -80,3 +84,7 @@ async def logout_user(
             secure=settings.security.config.JWT_COOKIE_SECURE,
             samesite=settings.security.config.JWT_COOKIE_SAMESITE,
         )
+
+@router.get("/me")
+async def get_me(user: UserResponse = Depends(required_user)) -> UserResponse:
+    return user
