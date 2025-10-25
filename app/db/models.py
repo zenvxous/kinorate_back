@@ -25,8 +25,8 @@ class User(Base):
     __tablename__ = "users"
 
     id = Column(UUID, primary_key=True, default=generate_uuid)
-    nickname = Column(String(50), nullable=False)
-    email = Column(String(256), nullable=False)
+    nickname = Column(String(50), nullable=False, unique=True)
+    email = Column(String(256), nullable=False, unique=True)
     password_hash = Column(String(256), nullable=False)
 
     recention = relationship("Recention", back_populates="user")
@@ -35,7 +35,7 @@ class Movie(Base):
     __tablename__ = "movies"
 
     id = Column(UUID, primary_key=True, default=generate_uuid)
-    tmdb_id = Column(Integer, nullable=False)
+    tmdb_id = Column(Integer, nullable=False, unique=True)
     genres = Column(ARRAY(String(25)), nullable=False)
 
     recention = relationship("Recention", back_populates="movie")

@@ -4,7 +4,7 @@ from fastapi import APIRouter, Form, Response
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.dao.users import UserDAO
+from app.dao.users import UsersDAO
 from app.db.config import get_db
 from app.exceptions.api import (
     InvalidCredentials,
@@ -17,6 +17,7 @@ from app.utils.common import is_valid_email
 from app.utils.session import (
     add_users_response_cookie,
     hash_password,
+    required_user,
     verify_password,
 )
 
@@ -33,11 +34,11 @@ async def register_user(
     if not is_valid_email(data.email):
         raise InvalidEmail
 
-    users = await UserDAO.get_by_email_or_nickname(session=session, email=data.email, nickname=data.nickname)
+    users = await UsersDAO.get_by_email_or_nickname(session=session, email=data.email, nickname=data.nickname)
     if users:
         raise UserAlreadyExists
 
-    await UserDAO.add(
+    await UsersDAO.add(
         session,
         email=data.email,
         nickname=data.nickname,
@@ -51,7 +52,7 @@ async def login_user(
     response: Response,
     session: AsyncSession = Depends(get_db),
 ):
-    user = await UserDAO.get_by_email(session=session, email=data.email)
+    user = await UsersDAO.get_by_email(session=session, email=data.email)
     if not user:
         raise InvalidCredentials
 
@@ -60,7 +61,7 @@ async def login_user(
     else :
         raise InvalidCredentials
 
-@router.post("/logout")
+@router.post("/logout", dependencies=[Depends(required_user)])
 async def logout_user(
     response: Response,
 ):

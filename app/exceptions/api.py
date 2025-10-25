@@ -24,3 +24,15 @@ class InvalidFormData(AppException):
         if details is None:
             details = {"error": "Invalid form data."}
         super().__init__(message, code="UNPROCESSABLE_ENTITY", status_code=422, details=details)
+
+class Unauthorized(AppException):
+    def __init__(self, message="Unauthorized access.", details: dict = None):
+        if details is None:
+            details = {"error": "Unauthorized access."}
+        super().__init__(message, code="UNAUTHORIZED", status_code=401, details=details)
+
+class UserDoesntExists(AppException):
+    def __init__(self, message="User doesn't exist.", details: dict = None):
+        if details is None:
+            details = {"error": "User doesn't exist."}
+        super().__init__(message, code="NOT_FOUND", status_code=404, details=details)

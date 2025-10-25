@@ -5,7 +5,7 @@ from app.dao.base import BaseDAO
 from app.db.models import User
 
 
-class UserDAO(BaseDAO):
+class UsersDAO(BaseDAO):
     model = User
 
     @classmethod
