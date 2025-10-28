@@ -9,13 +9,11 @@ from app.db.config import get_db
 from app.exceptions.api import (
     InvalidCredentials,
     InvalidEmail,
+    NoChangesError,
     UserAlreadyExists,
+    UserEmailOrNicknameAlreadyExists,
 )
-from app.schemas.users import (
-    CreateUsersSchema,
-    LoginUsersSchema,
-    UserResponse,
-)
+from app.schemas.users import CreateUsersSchema, LoginUsersSchema, UpdateUsersSchema, UserResponse
 from app.settings import settings
 from app.utils.common import is_valid_email
 from app.utils.session import (
@@ -30,7 +28,7 @@ router = APIRouter(
     tags=["users"],
 )
 
-@router.post("/register")
+@router.post("/register", status_code= 201)
 async def register_user(
     data: Annotated[CreateUsersSchema, Form()],
     session: AsyncSession = Depends(get_db),
@@ -50,7 +48,7 @@ async def register_user(
     )
     await session.commit()
 
-@router.post("/login")
+@router.post("/login", status_code=204)
 async def login_user(
     data: Annotated[LoginUsersSchema, Form()],
     response: Response,
@@ -65,7 +63,7 @@ async def login_user(
     else :
         raise InvalidCredentials
 
-@router.post("/logout", dependencies=[Depends(required_user)])
+@router.post("/logout", dependencies=[Depends(required_user)], status_code=204)
 async def logout_user(
     response: Response,
 ):
@@ -85,6 +83,46 @@ async def logout_user(
             samesite=settings.security.config.JWT_COOKIE_SAMESITE,
         )
 
-@router.get("/me")
+@router.get("/me", status_code=200)
 async def get_me(user: UserResponse = Depends(required_user)) -> UserResponse:
     return user
+
+@router.put("/me", status_code=200)
+async def update_me(
+    data: UpdateUsersSchema,
+    user = Depends(required_user),
+    session: AsyncSession = Depends(get_db),
+):
+    if not is_valid_email(data.email):
+        raise InvalidEmail
+
+    if data.email == user.email and data.nickname == user.nickname:
+        raise NoChangesError
+
+    existing_users = await UsersDAO.get_by_email_or_nickname(session=session, email=data.email, nickname=data.nickname)
+
+    for existing_user in existing_users:
+        if existing_user.id != user.id:
+            raise UserEmailOrNicknameAlreadyExists
+
+    updated_user = await UsersDAO.update(
+        session,
+        id=user.id,
+        nickname=data.nickname,
+        email=data.email,
+    )
+    await session.commit()
+
+    return UserResponse(
+        id=updated_user.id,
+        email=updated_user.email,
+        nickname=updated_user.nickname,
+    )
+
+@router.delete("/me", status_code=204)
+async def delete_me(
+    user = Depends(required_user),
+    session: AsyncSession = Depends(get_db),
+):
+    await UsersDAO.delete(session=session, id=user.id)
+    await session.commit()

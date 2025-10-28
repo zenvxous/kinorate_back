@@ -20,3 +20,7 @@ class UserResponse(BaseModel):
     id: UUID
     email: str
     nickname: str
+
+class UpdateUsersSchema(BaseModel):
+    nickname: str
+    email: str
