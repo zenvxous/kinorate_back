@@ -36,3 +36,9 @@ class UserDoesntExists(AppException):
         if details is None:
             details = {"error": "User doesn't exist."}
         super().__init__(message, code="NOT_FOUND", status_code=404, details=details)
+
+class Forbidden(AppException):
+    def __init__(self, message="Forbidden access.", details: dict = None):
+        if details is None:
+            details = {"error": "Forbidden access."}
+        super().__init__(message, code="FORBIDDEN", status_code=403, details=details)

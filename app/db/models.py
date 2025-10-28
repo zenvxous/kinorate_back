@@ -36,6 +36,7 @@ class Movie(Base):
 
     id = Column(UUID, primary_key=True, default=generate_uuid)
     tmdb_id = Column(Integer, nullable=False, unique=True)
+    title = Column(String(256), nullable=False)
     genres = Column(ARRAY(String(25)), nullable=False)
 
     recention = relationship("Recention", back_populates="movie")

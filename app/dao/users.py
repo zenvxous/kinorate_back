@@ -9,7 +9,7 @@ class UsersDAO(BaseDAO):
     model = User
 
     @classmethod
-    async def get_by_email_or_nickname(cls, session: AsyncSession, email: str, nickname: str) -> list["User"]:
+    async def get_by_email_or_nickname(cls, session: AsyncSession, email: str, nickname: str) -> list[User]:
         query = select(cls.model).where(
             (cls.model.email == email) | (cls.model.nickname == nickname)
         )
