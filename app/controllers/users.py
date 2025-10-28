@@ -13,7 +13,7 @@ from app.exceptions.api import (
     UserAlreadyExists,
     UserEmailOrNicknameAlreadyExists,
 )
-from app.schemas.users import CreateUsersSchema, LoginUsersSchema, UpdateUsersSchema, UserResponse
+from app.schemas.users import CreateUserSchema, LoginUserSchema, UpdateUserSchema, UserResponse
 from app.settings import settings
 from app.utils.common import is_valid_email
 from app.utils.session import (
@@ -30,7 +30,7 @@ router = APIRouter(
 
 @router.post("/register", status_code= 201)
 async def register_user(
-    data: Annotated[CreateUsersSchema, Form()],
+    data: Annotated[CreateUserSchema, Form()],
     session: AsyncSession = Depends(get_db),
 ):
     if not is_valid_email(data.email):
@@ -50,7 +50,7 @@ async def register_user(
 
 @router.post("/login", status_code=204)
 async def login_user(
-    data: Annotated[LoginUsersSchema, Form()],
+    data: Annotated[LoginUserSchema, Form()],
     response: Response,
     session: AsyncSession = Depends(get_db),
 ):
@@ -89,7 +89,7 @@ async def get_me(user: UserResponse = Depends(required_user)) -> UserResponse:
 
 @router.put("/me", status_code=200)
 async def update_me(
-    data: UpdateUsersSchema,
+    data: UpdateUserSchema,
     user = Depends(required_user),
     session: AsyncSession = Depends(get_db),
 ):

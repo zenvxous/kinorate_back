@@ -6,13 +6,13 @@ from app.utils.as_form import as_form
 
 
 @as_form
-class CreateUsersSchema(BaseModel):
+class CreateUserSchema(BaseModel):
     nickname: str
     email: str
     password: str
 
 @as_form
-class LoginUsersSchema(BaseModel):
+class LoginUserSchema(BaseModel):
     email: str
     password: str
 
@@ -21,6 +21,6 @@ class UserResponse(BaseModel):
     email: str
     nickname: str
 
-class UpdateUsersSchema(BaseModel):
+class UpdateUserSchema(BaseModel):
     nickname: str
     email: str
