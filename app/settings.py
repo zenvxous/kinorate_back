@@ -19,6 +19,8 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     JWT_EXPIRY_USER_SECONDS: int = Field(2592000)
 
+    TMDB_API_KEY: str
+
     logger: logging.Logger = logging.getLogger("uvicorn.info")
     security: AuthX | None = Field(default=None, init=False)
 
