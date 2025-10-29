@@ -17,3 +17,16 @@ class RecentionsDAO(BaseDAO):
         result = await session.execute(query)
         return result.scalars().all()
 
+    @classmethod
+    async def update(cls, session, id, **data) -> Recention:
+        await super().update(session, id, **data)
+        query = select(cls.model).where(cls.model.id == id).options(selectinload(cls.model.movie))
+        result = await session.execute(query)
+        return result.scalars().first()
+
+    @classmethod
+    async def find_by_id(cls, session, id) -> Recention:
+        query = select(cls.model).where(cls.model.id == id).options(selectinload(cls.model.movie))
+        result = await session.execute(query)
+        return result.scalar_one_or_none()
+

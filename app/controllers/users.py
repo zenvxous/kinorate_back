@@ -8,20 +8,19 @@ from app.dao.users import UsersDAO
 from app.db.config import get_db
 from app.exceptions.api import (
     InvalidCredentials,
-    InvalidEmail,
     NoChangesError,
     UserAlreadyExists,
     UserEmailOrNicknameAlreadyExists,
 )
 from app.schemas.users import CreateUserSchema, LoginUserSchema, UpdateUserSchema, UserResponse
 from app.settings import settings
-from app.utils.common import is_valid_email
 from app.utils.session import (
     add_users_response_cookie,
     hash_password,
     required_user,
     verify_password,
 )
+from app.utils.users import check_user
 
 router = APIRouter(
     prefix="/users",
@@ -33,8 +32,7 @@ async def register_user(
     data: Annotated[CreateUserSchema, Form()],
     session: AsyncSession = Depends(get_db),
 ):
-    if not is_valid_email(data.email):
-        raise InvalidEmail
+    check_user(email=data.email, nickname=data.nickname)
 
     users = await UsersDAO.get_by_email_or_nickname(session=session, email=data.email, nickname=data.nickname)
     if users:
@@ -92,9 +90,8 @@ async def update_me(
     data: UpdateUserSchema,
     user = Depends(required_user),
     session: AsyncSession = Depends(get_db),
-):
-    if not is_valid_email(data.email):
-        raise InvalidEmail
+) -> UserResponse:
+    check_user(email=data.email, nickname=data.nickname)
 
     if data.email == user.email and data.nickname == user.nickname:
         raise NoChangesError
@@ -106,7 +103,7 @@ async def update_me(
             raise UserEmailOrNicknameAlreadyExists
 
     updated_user = await UsersDAO.update(
-        session,
+        session=session,
         id=user.id,
         nickname=data.nickname,
         email=data.email,
