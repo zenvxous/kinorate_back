@@ -35,9 +35,10 @@ class Movie(Base):
     __tablename__ = "movies"
 
     id = Column(UUID, primary_key=True, default=generate_uuid)
-    tmdb_id = Column(Integer, nullable=False, unique=True)
+    tmdb_id = Column(Integer, nullable=False, unique=True, index=True)
     title = Column(String(256), nullable=False)
     genres = Column(ARRAY(String(25)), nullable=False)
+    poster_path = Column(String(256), nullable=False)
 
     recention = relationship("Recention", back_populates="movie")
 

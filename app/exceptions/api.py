@@ -54,3 +54,9 @@ class NoChangesError(AppException):
         if details is None:
             details = {"error": "No changes detected in update request."}
         super().__init__(message, code="BAD_REQUEST", status_code=400, details=details)
+
+class MovieAlreadyExists(AppException):
+    def __init__(self, message="Movie already exists.", details: dict = None):
+        if details is None:
+            details = {"error": "Movie with this TMDB ID already exists."}
+        super().__init__(message, code="BAD_REQUEST", status_code=400, details=details)

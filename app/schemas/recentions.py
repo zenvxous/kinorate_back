@@ -2,7 +2,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, ConfigDict
 
-from app.schemas.movies import MovieInRecintionResponse
+from app.schemas.movies import MovieInRecentionResponse
 
 
 class RecentionSmallResponse(BaseModel):
@@ -10,6 +10,6 @@ class RecentionSmallResponse(BaseModel):
     rate: int
     movie_status: str
 
-    movie: MovieInRecintionResponse
+    movie: MovieInRecentionResponse
 
     model_config = ConfigDict(from_attributes=True)

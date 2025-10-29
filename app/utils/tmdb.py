@@ -24,3 +24,10 @@ async def get_movie_by_tmdb_id(movie_id: int):
     async with ClientSession() as session:
         async with session.get(url, headers=headers) as response:
             return await response.json()
+
+async def get_movie_poster(poster_path: str):
+    url = f"https://image.tmdb.org/t/p/w500/{poster_path}"
+
+    async with ClientSession() as session:
+        async with session.get(url) as response:
+            return await response.read()
