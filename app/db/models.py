@@ -29,7 +29,7 @@ class User(Base):
     email = Column(String(256), nullable=False, unique=True)
     password_hash = Column(String(256), nullable=False)
 
-    recention = relationship("Recention", back_populates="user")
+    recention = relationship("Recention", back_populates="user", cascade="all, delete-orphan")
 
 class Movie(Base):
     __tablename__ = "movies"
@@ -40,7 +40,7 @@ class Movie(Base):
     genres = Column(ARRAY(String(25)), nullable=False)
     poster_path = Column(String(256), nullable=False)
 
-    recention = relationship("Recention", back_populates="movie")
+    recention = relationship("Recention", back_populates="movie", cascade="all, delete-orphan")
 
 class Recention(Base):
     __tablename__ = "recentions"
@@ -50,8 +50,8 @@ class Recention(Base):
     comment = Column(Text, nullable=True)
     movie_status = Column(String(10), nullable=False)
 
-    user_id = Column(UUID, ForeignKey("users.id"), nullable=False)
-    movie_id = Column(UUID, ForeignKey("movies.id"), nullable=False)
+    user_id = Column(UUID, ForeignKey("users.id", ondelete="CASCADE"), nullable=False)
+    movie_id = Column(UUID, ForeignKey("movies.id", ondelete="CASCADE"), nullable=False)
 
     user = relationship("User", back_populates="recention")
     movie = relationship("Movie", back_populates="recention")

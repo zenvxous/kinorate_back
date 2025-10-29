@@ -76,3 +76,15 @@ async def get_movie_by_tmdb_id(
         genres=movie.genres,
         poster_path=movie.poster_path,
     )
+
+@router.delete("/{movie_id}", status_code=204)
+async def delete_movie(
+    movie_id: str,
+    session: AsyncSession = Depends(get_db)
+):
+    movie = await MoviesDAO.find_by_id(session=session, model_id=movie_id)
+    if not movie:
+        raise MovieNotFound
+
+    await MoviesDAO.delete(session=session, id=movie_id)
+    await session.commit()
