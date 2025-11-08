@@ -31,4 +31,4 @@ init_migrations:
 
 .PHONY: app-terminal
 app-terminal:
-	uv run uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+	uv run uvicorn app.main:app --reload --host localhost --port 8000
