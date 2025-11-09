@@ -33,9 +33,13 @@ async def get_movie_poster(poster_path: str):
             return await response.read()
 
 async def get_genres():
-    url = f"https://api.themoviedb.org/3/genre/movie/list?api_key={settings.TMDB_API_KEY}&language=en-US"
+    url = "https://api.themoviedb.org/3/genre/movie/list?language=en"
+    headers = {
+    "accept": "application/json",
+    "Authorization": "Bearer " + settings.TMDB_API_KEY,
+    }
 
     async with ClientSession() as session:
-        async with session.get(url) as response:
+        async with session.get(url, headers=headers) as response:
             data =  await response.json()
             return data.get("genres", [])
