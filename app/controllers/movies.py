@@ -23,14 +23,14 @@ async def create_movie(
 ) -> MovieResponse:
     if await MoviesDAO.get_by_tmdb_id(session=session, tmdb_id=data.tmdb_id):
         raise MovieAlreadyExists
-    if not check_genres(data.genres):
+    if not await check_genres(data.genres):
         raise InvalidMovieGenres
 
     movie = await MoviesDAO.add(
         session=session,
         tmdb_id=data.tmdb_id,
         title=data.title,
-        genres=data.genres.sort(),
+        genres=sorted(data.genres),
         poster_path=data.poster_path,
     )
     await session.commit()

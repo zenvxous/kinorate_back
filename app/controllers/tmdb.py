@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Response
 
 from app.utils.tmdb import (
+    get_genres,
     get_movie_by_tmdb_id,
     get_movie_poster,
     serch_movies,
@@ -24,3 +25,6 @@ async def get_poster(poster_path: str):
     image = await get_movie_poster(poster_path=poster_path)
     return Response(content=image, media_type="image/jpeg")
 
+@router.get("/genres")
+async def get_movie_genres():
+    return await get_genres()

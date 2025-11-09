@@ -1,24 +1,12 @@
-def check_genres(genres: list[str]) -> bool:
-    valid_genres = {
-    "Action",
-    "Adventure",
-    "Animation",
-    "Comedy",
-    "Crime",
-    "Documentary",
-    "Drama",
-    "Family",
-    "Fantasy",
-    "History",
-    "Horror",
-    "Music",
-    "Mystery",
-    "Romance",
-    "Science Fiction",
-    "TV Movie",
-    "Thriller",
-    "War",
-    "Western"
-    }
+from app.utils.tmdb import get_genres
 
-    return all(genre in valid_genres for genre in genres)
+_cached_valid_genres: set[str] | None = None
+
+async def check_genres(genres: list[str]) -> bool:
+    global _cached_valid_genres
+
+    if _cached_valid_genres is None:
+        tmdb_genres_list = await get_genres()
+        _cached_valid_genres = {genre['name'] for genre in tmdb_genres_list}
+
+    return all(genre in _cached_valid_genres for genre in genres)
