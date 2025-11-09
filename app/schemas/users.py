@@ -24,3 +24,8 @@ class UserResponse(BaseModel):
 class UpdateUserSchema(BaseModel):
     nickname: str
     email: str
+
+class UserStatsResponse(BaseModel):
+    movies_watched: int
+    average_rating: float | None
+    reviews_written: int

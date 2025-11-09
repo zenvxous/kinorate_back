@@ -4,6 +4,7 @@ from fastapi import APIRouter, Form, Response
 from fastapi.params import Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.dao.recentions import RecentionsDAO
 from app.dao.users import UsersDAO
 from app.db.config import get_db
 from app.exceptions.api import (
@@ -12,7 +13,13 @@ from app.exceptions.api import (
     UserAlreadyExists,
     UserEmailOrNicknameAlreadyExists,
 )
-from app.schemas.users import CreateUserSchema, LoginUserSchema, UpdateUserSchema, UserResponse
+from app.schemas.users import (
+    CreateUserSchema,
+    LoginUserSchema,
+    UpdateUserSchema,
+    UserResponse,
+    UserStatsResponse,
+)
 from app.settings import settings
 from app.utils.session import (
     add_users_response_cookie,
@@ -115,6 +122,14 @@ async def update_me(
         email=updated_user.email,
         nickname=updated_user.nickname,
     )
+
+@router.get("/me/stats", status_code=200)
+async def get_my_stats(
+    user = Depends(required_user),
+    session: AsyncSession = Depends(get_db),
+) -> UserStatsResponse:
+    stats = await RecentionsDAO.get_stats_by_user_id(session=session, user_id=user.id)
+    return UserStatsResponse(**stats)
 
 @router.delete("/me", status_code=204)
 async def delete_me(
